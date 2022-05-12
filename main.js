@@ -1,32 +1,60 @@
-async function getRandomQuestion(){
-    const rawResponse = await fetch("https://jservice.io/api/random")
-    const parsedBody = await rawResponse.json()
-    const questionObject = parsedBody[0]
-    const newElement = document.createElement('div')
-    newElement.innerHTML = questionObject.question
-    document.body.appendChild(newElement)
-    return questionObject
+let currentQuestionObject = {};
+
+async function getRandomQuestion() {
+  const rawResponse = await fetch("https://jservice.io/api/random");
+  const parsedBody = await rawResponse.json();
+  const questionObject = parsedBody[0];
+  return questionObject;
 }
 
-async function getTheAnswer(){
-    const questionObject = getRandomQuestion()
-    const newElement = document.createElement('div')
-    newElement.innerHTML = questionObject.answer
-    document.body.appendChild(newElement)
+async function newQuestionButtonHandler() {
+  currentQuestionObject = await getRandomQuestion();
+  const questionDiv = document.querySelector("#question");
+  const answerDiv = document.querySelector("#answer");
+  if (questionDiv) {
+    questionDiv.remove();
+  }
+  if (answerDiv) {
+    answerDiv.remove();
+  }
+  putElementOnPage("div", currentQuestionObject.question, "question");
 }
 
-function newQuestionButton() {
-    const qButton = document.createElement('button')
-    document.body.appendChild(qButton)
-    qButton.innerHTML = "New Question"
-    qButton.addEventListener("click", getRandomQuestion)
+function answerButtonHandler() {
+  const answerDiv = document.querySelector("#answer");
+  if (!answerDiv) {
+    putElementOnPage("div", currentQuestionObject.answer, "answer");
+  }
 }
-newQuestionButton()
 
-function revealAnswerButton() {
-    const aButton = document.createElement('button')
-    document.body.appendChild(aButton)
-    aButton.innerHTML = "Reveal Answer"
-    aButton.addEventListener("click", getTheAnswer )
+function initialPageSetup() {
+  const qButton = putElementOnPage("button", "New Question", "qButton");
+  qButton.addEventListener("click", newQuestionButtonHandler);
+
+  const aButton = putElementOnPage("button", "Reveal Answer", "aButton");
+  aButton.addEventListener("click", answerButtonHandler);
+
+  putElementOnPage("input", "", "answerInput");
+  const submitButton = putElementOnPage("button", "submit", "submitButton");
+  submitButton.addEventListener("click", () => {
+    const textValue = document.querySelector("#answerInput").value;
+    if (
+      textValue.toLowerCase() === currentQuestionObject.answer.toLowerCase()
+    ) {
+      alert("correct");
+    } else {
+      alert("incorrect");
+    }
+  });
 }
-revealAnswerButton()
+
+initialPageSetup();
+
+// Utility functions
+function putElementOnPage(elementType, inputString, id) {
+  const newElement = document.createElement(elementType);
+  newElement.id = id;
+  newElement.innerHTML = inputString;
+  document.body.appendChild(newElement);
+  return newElement;
+}
