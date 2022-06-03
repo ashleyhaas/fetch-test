@@ -118,6 +118,9 @@ function getCategoryTitle(id) {
 }
 
 async function initialPageSetup() {
+  let instructions = putElementOnPage('div', '', 'instructions')
+  instructions.style.border = '1px solid black'
+  instructions.innerHTML = "Instructions: Click a box to reveal a question. Then, answer the question using the submit box. If you get the answer right, the point value of the question will be added to your points, get it wrong and they will be subtracted. The first player to reach 1500 points wins. Good luck!"
   putElementOnPage('div', 'Current Player:' + currentPlayer, 'currentPlayer')
   // putElementOnPage('div', 'Current Category:' + getCategoryTitle(categoryId), 'currentCat')
   // putElementOnPage('div', 'Choose Your Category', 'chooseCategory')
