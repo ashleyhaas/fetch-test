@@ -7,13 +7,14 @@ let categoryIds = [21, 105, 253]
 let currentQuestionNumber = 0
 let currentBoxElement
 
-function createGrid() {
+function createGrid(categoryId) {
+  let containerElement = putElementOnPage('div', "", 'columnContainer' + categoryId, document.querySelector('#gridContainer'))
   for (let i = 0; i < 6; i++) {
-    let currentBox = putElementOnPage('div', '', 'box' + i)
-    currentBox.style.width = '150px'
-    currentBox.style.height = '150px'
+    let currentBox = putElementOnPage('div', '', 'box' + categoryId + i, containerElement)
+    currentBox.style.width = '200px'
+    currentBox.style.height = '100px'
     currentBox.style.border = '1px solid black'
-    let currentQuestion = categoryQuestions[21][i]
+    let currentQuestion = categoryQuestions[categoryId][i]
     currentBox.innerHTML = currentQuestion.value
     if (i !== 0) {
       currentBox.addEventListener('click', () => {
@@ -24,7 +25,7 @@ function createGrid() {
       })
     }
   }
-  document.querySelector('#box0').innerHTML = "Animals"
+  document.querySelector('#box' + categoryId + '0').innerHTML = getCategoryTitle(categoryId)
 }
 // async function getRandomQuestion() {
 //   const rawResponse = await fetch("https://jservice.io/api/random");
@@ -79,7 +80,7 @@ function submitHandler() {
   }
 
   currentBoxElement.innerHTML = ""
-  currentBoxElement.removeEventListener('click')
+  //currentBoxElement.removeEventListener('click')
 
   setTimeout(() => {
     answerStatusDiv.innerHTML = ""
@@ -149,11 +150,15 @@ async function initialPageSetup() {
   scoreElement2.style.width = "200px"
   putElementOnPage("div", "", "answerStatus")
 
+  let gridContainer = putElementOnPage('div', "", 'gridContainer')
+  gridContainer.style.display = "flex"
+
   for (let i = 0; i < categoryIds.length; i++) {
     await getCategory(categoryIds[i])
+    createGrid(categoryIds[i])
   }
-  createGrid()
 }
+
 initialPageSetup()
 
 
@@ -177,6 +182,4 @@ function putElementOnPage(elementType, inputString, id, parentElement) {
   return newElement;
 }
 
-//add visuals & let them select a point value to see the questions
-//put the question on the page after clicking a value
-//edit submit handler to connect the question selected with the answer
+//fix the remove event listener bug
